@@ -291,3 +291,9 @@ CMakeList.txt
 *.vcproj
 *.pdb
 *.exe
+*.filters
+*.vcxproj
+*.cmake
+
+CMakelist/**
+*.bak
