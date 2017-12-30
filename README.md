@@ -1,1 +1,2 @@
 # SeaSmartBoxClient
+SeaSmartBox
