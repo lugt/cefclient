@@ -531,14 +531,18 @@ if(OS_WINDOWS)
     ${CEFCLIENT_RESOURCES_SRCS}
     ${CEFCLIENT_WINDOWS_SRCS}
     )
-  add_executable(cef_local_renders browser/sea_handler.cc browser/sea_handler.h browser/SeasHandler.cpp browser/SeasHandler.h)
+  add_executable(cef_local_renders 
+  browser/sea_handler.cc 
+  browser/sea_handler.h 
+  browser/SeasHandler.cpp 
+  browser/SeasHandler.h)
   # Executable target.
   add_executable(${CEF_TARGET} WIN32 ${CEFCLIENT_SRCS})
   SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
-  add_dependencies(${CEF_TARGET} cef_local_renders)
+  #add_dependencies(${CEF_TARGET} cef_local_renders)
 
   target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS} glu32.lib imm32.lib opengl32.lib)
-  target_link_libraries(${CEFCLIENT_RENDERER_SRCS}  ${CEFCLIENT_BROWSER_SRCS})
+  #target_link_libraries(${CEFCLIENT_RENDERER_SRCS}  ${CEFCLIENT_BROWSER_SRCS})
 
   if(USE_ATL)
     # Required by VS2013 to link accessibility API functions.
