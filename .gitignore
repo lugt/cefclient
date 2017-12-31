@@ -296,3 +296,5 @@ __pycache__/
 
 CMakelist/**
 *.bak
+*.depend
+*.stamp
