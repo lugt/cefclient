@@ -294,7 +294,8 @@ __pycache__/
 *.vcxproj
 *.cmake
 
-CMakelist/**
+CMakeFiles/**
 *.bak
 *.depend
 *.stamp
+CMakeCache.txt

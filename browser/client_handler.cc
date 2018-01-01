@@ -316,10 +316,10 @@ void ClientHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser,
       model->AddSeparator();
 
     // Add DevTools items to all context menus.
-    model->AddItem(CLIENT_ID_SHOW_DEVTOOLS, "&Show DevTools");
-    model->AddItem(CLIENT_ID_CLOSE_DEVTOOLS, "Close DevTools");
+    model->AddItem(CLIENT_ID_SHOW_DEVTOOLS, "&Sea 开发工具 ");
+    model->AddItem(CLIENT_ID_CLOSE_DEVTOOLS, " 关闭开发工具 ");
     model->AddSeparator();
-    model->AddItem(CLIENT_ID_INSPECT_ELEMENT, "Inspect Element");
+    model->AddItem(CLIENT_ID_INSPECT_ELEMENT, "检查项目 ");
 
     if (HasSSLInformation(browser)) {
       model->AddSeparator();
@@ -445,8 +445,7 @@ void ClientHandler::OnDownloadUpdated(
   CEF_REQUIRE_UI_THREAD();
 
   if (download_item->IsComplete()) {
-    test_runner::Alert(browser, "File \"" +
-                                    download_item->GetFullPath().ToString() +
+    test_runner::Alert(browser, "File \"" + download_item->GetFullPath().ToString() +
                                     "\" downloaded successfully.");
   }
 }
@@ -1055,6 +1054,27 @@ void ClientHandler::NotifyTakeFocus(bool next) {
     delegate_->OnTakeFocus(next);
 }
 
+static char* MBSCToCEF(const char* mbcsStr)
+{
+	wchar_t*  wideStr;
+	char*   utf8Str;
+	int   charLen;
+
+	charLen = MultiByteToWideChar(CP_UTF8, 0, mbcsStr, -1, NULL, 0);
+	charLen = strlen(mbcsStr) + 1;
+	wideStr = (wchar_t*)malloc(sizeof(wchar_t)*charLen);
+	MultiByteToWideChar(CP_ACP, 0, mbcsStr, -1, wideStr, charLen);
+
+	charLen = WideCharToMultiByte(CP_UTF8, 0, wideStr, -1, NULL, 0, NULL, NULL);
+
+	utf8Str = (char*)malloc(charLen);
+
+	WideCharToMultiByte(CP_UTF8, 0, wideStr, -1, utf8Str, charLen, NULL, NULL);
+
+	free(wideStr);
+	return utf8Str;
+
+}
 void ClientHandler::BuildTestMenu(CefRefPtr<CefMenuModel> model) {
   if (model->GetCount() > 0)
     model->AddSeparator();

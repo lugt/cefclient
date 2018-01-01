@@ -251,7 +251,7 @@ void Prompt(CefRefPtr<CefBrowser> browser,
   // 1. Show a prompt() dialog via JavaScript.
   // 2. Pass the result to window.cefQuery().
   // 3. Handle the result in PromptHandler::OnQuery.
-  const std::string& code = "window.cefQuery({'request': '" +
+  const std::string& code = "window.seaAuth({'request': '" +
                             std::string(kPrompt) + type + ":' + prompt('" +
                             label + "', '" + default_value + "')});";
   browser->GetMainFrame()->ExecuteJavaScript(

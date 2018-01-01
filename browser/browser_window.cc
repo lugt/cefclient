@@ -34,7 +34,6 @@ void BrowserWindow::OnBrowserCreated(CefRefPtr<CefBrowser> browser) {
   REQUIRE_MAIN_THREAD();
   DCHECK(!browser_);
   browser_ = browser;
-  int x = 0;
   delegate_->OnBrowserCreated(browser);
 }
 

@@ -41,7 +41,7 @@ void RootWindowViews::Init(RootWindow::Delegate* delegate,
   DCHECK(!initialized_);
 
   delegate_ = delegate;
-  with_controls_ = config.with_controls;
+  with_controls_ = false; //config.with_controls;
   with_extension_ = config.with_extension;
   initially_hidden_ = config.initially_hidden;
   if (initially_hidden_ && !config.source_bounds.IsEmpty()) {
