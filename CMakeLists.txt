@@ -64,6 +64,8 @@ set(CEFCLIENT_BROWSER_BROWSER_SRCS
   browser/sea_handler.h
   browser/SeasHandler.cpp
   browser/SeasHandler.h
+  browser/sqlite.c
+  browser/sqlite.h
   )
 source_group(cefclient\\\\browser FILES ${CEFCLIENT_BROWSER_BROWSER_SRCS})
 
@@ -537,8 +539,10 @@ if(OS_WINDOWS)
   browser/SeasHandler.cpp 
   browser/SeasHandler.h)
   # Executable target.
+
   add_executable(${CEF_TARGET} WIN32 ${CEFCLIENT_SRCS})
   SET_EXECUTABLE_TARGET_PROPERTIES(${CEF_TARGET})
+
   #add_dependencies(${CEF_TARGET} cef_local_renders)
 
   target_link_libraries(${CEF_TARGET} libcef_lib libcef_dll_wrapper ${CEF_STANDARD_LIBS} glu32.lib imm32.lib opengl32.lib)
