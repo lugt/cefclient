@@ -89,6 +89,8 @@ class ServerHandler : public CefServerHandler {
                      const CefString& client_address,
                      CefRefPtr<CefRequest> request) override {
     // Parse the request URL and retrieve the path without leading slash.
+
+	// 处理Http请求
     CefURLParts url_parts;
     CefParseURL(request->GetURL(), url_parts);
     std::string path = CefString(&url_parts.path);

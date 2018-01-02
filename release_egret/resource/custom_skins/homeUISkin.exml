@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<e:Skin class="homeUISkin" width="480" height="800" xmlns:e="http://ns.egret.com/eui">
+	<e:Image id="imgBg" height="100%" width="100%" x="0" y="0" />
+	<e:ToggleButton id="mbtnProfile" x="15" y="712" name="玩家" >
+		<e:skinName>
+			<e:Skin states="up,down,disabled,disabledAndSelected" minHeight="50" minWidth="100">
+				<e:Image scale9Grid="1,3,8,8" source.disabledAndSelected="mbtn_BgFc_png" source="mbtn_Bg_png" source.down="mbtn_BgFc_png" x="1" y="6"/>
+	<e:Image source="mbtnPlayer_png" y="-2" x="7"/>
+			</e:Skin>
+		</e:skinName>
+	</e:ToggleButton>
+	<e:ToggleButton id="mbtnHeros" y="715" x="129" name="英雄表" > 
+		<e:skinName>
+			<e:Skin states="up,down,disabled,disabledAndSelected" minHeight="50" minWidth="100">
+				<e:Image scale9Grid="1,3,8,8" source.disabledAndSelected="mbtn_BgFc_png" source="mbtn_Bg_png" source.down="mbtn_BgFc_png" x="0" y="3"/>
+				<e:Image source="mbtnHeros_png" x="9" y="3"/>
+			</e:Skin>
+		</e:skinName>
+	</e:ToggleButton>
+	<e:ToggleButton id="mbtnGoods" y="714" x="242" name="物品表" >
+		<e:skinName>
+			<e:Skin states="up,down,disabled,disabledAndSelected" minHeight="50" minWidth="100">
+				<e:Image scale9Grid="1,3,8,8" source.disabledAndSelected="mbtn_BgFc_png" source="mbtn_Bg_png" source.down="mbtn_BgFc_png" y="4" x="0"/>
+				<e:Image source="mbtnGoods_png" y="2" x="6"/>
+			</e:Skin>
+		</e:skinName>
+	</e:ToggleButton>
+	<e:ToggleButton id="mbtnAbout" y="718" x="355" name="关于">
+		<e:skinName>
+			<e:Skin states="up,down,disabled,disabledAndSelected" minHeight="50" minWidth="100">
+				<e:Image scale9Grid="1,3,8,8" source.disabledAndSelected="mbtn_BgFc_png" source="mbtn_Bg_png" source.down="mbtn_BgFc_png" x="2" y="0"/>
+				<e:Image source="mbtnAbout_png" x="0" y="1"/>
+			</e:Skin>
+		</e:skinName>
+	</e:ToggleButton>
+</e:Skin>

@@ -55,14 +55,14 @@ class ClientRenderDelegate : public ClientAppRenderer::Delegate {
     CefMessageRouterConfig config;
     message_router_ = CefMessageRouterRendererSide::Create(config);
 	/**
-	 Extension 可以嵌入Extension代码
+	 Extension 可以嵌入Extension代码 (每个页面都会有)
 	*/
 	std::string extensionCode =
-		"var test;"
-		"if (!test)"
-		"  test = {};"
+		"var seaExtension;"
+		"if (!seaExtension)"
+		"  seaExtension = {};"
 		"(function() {"
-		"  test.myval = 'My Value!';"
+		"  seaExtension.msg = 'Extension Sea is daemoning!';"
 		"})();";
 
 	// Register the extension.
@@ -76,24 +76,10 @@ class ClientRenderDelegate : public ClientAppRenderer::Delegate {
     message_router_->OnContextCreated(browser, frame, context);
 	// Retrieve the context's window object.
 	CefRefPtr<CefV8Value> object = context->GetGlobal();
-
-	// Create a new V8 string value. See the "Basic JS Types" section below.
-	CefRefPtr<CefV8Value> str = CefV8Value::CreateString("1.0.7a");
-
-	// Add the string to the window object as "window.myval". See the "JS Objects" section below.
-	object->SetValue("seaFrameVersion", str, V8_PROPERTY_ATTRIBUTE_NONE);
-
-	CefRefPtr<CefV8Value> arr = CefV8Value::CreateArray(2);
-	//Values are assigned to an array using the SetValue() method variant that takes an index as the first argument.
-	// Add two values to the array.
-	arr->SetValue(0, CefV8Value::CreateString("My First String!"));
-	arr->SetValue(1, CefV8Value::CreateString("My Second String!"));
-
-
+	
 	//Object:
 	CefRefPtr<CefV8Value> obj = CefV8Value::CreateObject(NULL,NULL);
-	//obj->SetValue("myval", CefV8Value::CreateString(CefString("My String!")));
-		
+	
 	/*CefRefPtr<CefV8Handler> handler = new MyV8Handler(this);
 	object->SetValue("register",
 		CefV8Value::CreateFunction("register", handler),
@@ -103,16 +89,18 @@ class ClientRenderDelegate : public ClientAppRenderer::Delegate {
 	CefRefPtr<CefV8Handler> handler = new CefV8HandlerImpl();
 
 	// Create the "myfunc" function.
-	CefRefPtr<CefV8Value> func = CefV8Value::CreateFunction("getSeaEnvironment", handler);
-	CefRefPtr<CefV8Value> func23 = CefV8Value::CreateFunction("seaAuth", handler);
-	CefRefPtr<CefV8Value> func3 = CefV8Value::CreateFunction("getSeaVersion", handler);
-	CefRefPtr<CefV8Value> func4 = CefV8Value::CreateFunction("userEdit", handler);
-	CefRefPtr<CefV8Value> func5 = CefV8Value::CreateFunction("actEquips", handler);
-	CefRefPtr<CefV8Value> func6 = CefV8Value::CreateFunction("readEquips", handler);
+	CefRefPtr<CefV8Value> func = CefV8Value::CreateFunction("SEA_getSeaEnvironment", handler);
+	CefRefPtr<CefV8Value> funcauth = CefV8Value::CreateFunction("SEA_seaAuth", handler);
+	CefRefPtr<CefV8Value> funcoauth = CefV8Value::CreateFunction("SEA_userstatus", handler);
+	CefRefPtr<CefV8Value> func3 = CefV8Value::CreateFunction("SEA_getSeaVersion", handler);
+	CefRefPtr<CefV8Value> func4 = CefV8Value::CreateFunction("SEA_userEdit", handler);
+	CefRefPtr<CefV8Value> func5 = CefV8Value::CreateFunction("SEA_actEquips", handler);
+	CefRefPtr<CefV8Value> func6 = CefV8Value::CreateFunction("SEA_readEquips", handler);
+	CefRefPtr<CefV8Value> funcretn = CefV8Value::CreateFunction("SEA_onreturn", handler);
 
 	// Add the "myfunc" function to the "window" object.
 	object->SetValue("getSeaEnvironment", func, V8_PROPERTY_ATTRIBUTE_NONE);
-	object->SetValue("seaAuth", func23, V8_PROPERTY_ATTRIBUTE_NONE);
+	object->SetValue("seaAuth", funcauth, V8_PROPERTY_ATTRIBUTE_NONE);
 	object->SetValue("userEdit", func3, V8_PROPERTY_ATTRIBUTE_NONE);
 
 
@@ -120,11 +108,26 @@ class ClientRenderDelegate : public ClientAppRenderer::Delegate {
 	CefRefPtr<CefV8Handler> handlerb = new CefV8HandlerImpl();
 
 	// Create the "myfunc" function.
-	CefRefPtr<CefV8Value> func2 = CefV8Value::CreateFunction("seasAlert", handlerb);
+	CefRefPtr<CefV8Value> funcAlert = CefV8Value::CreateFunction("getSeaAlert", handlerb);
+	CefRefPtr<CefV8Value> funcWxToken = CefV8Value::CreateFunction("getWxtoken", handlerb);
 
 	// Add the "myfunc" function to the "window" object.
-	object->SetValue("seasAlert", func2, V8_PROPERTY_ATTRIBUTE_NONE);
-
+	obj->SetValue("alert", funcAlert, V8_PROPERTY_ATTRIBUTE_NONE);
+	obj->SetValue("oauth", funcoauth, V8_PROPERTY_ATTRIBUTE_NONE);
+	obj->SetValue("auth", funcauth, V8_PROPERTY_ATTRIBUTE_NONE);
+	obj->SetValue("onReturn", funcretn, V8_PROPERTY_ATTRIBUTE_NONE);
+	obj->SetValue("wxtoken", funcWxToken, V8_PROPERTY_ATTRIBUTE_NONE);
+	obj->SetValue("credential", CefV8Value::CreateString(CefString("frame_x8_c7ep9")), V8_PROPERTY_ATTRIBUTE_NONE);
+	// Create a new V8 string value. See the "Basic JS Types" section below.
+	CefRefPtr<CefV8Value> versionStr = CefV8Value::CreateString("1.0.7a");
+	object->SetValue("version", versionStr, V8_PROPERTY_ATTRIBUTE_NONE);
+	// Add the string to the window object as "window.myval". See the "JS Objects" section below.
+	CefRefPtr<CefV8Value> arr = CefV8Value::CreateArray(2);
+	//Values are assigned to an array using the SetValue() method variant that takes an index as the first argument.
+	arr->SetValue(0, CefV8Value::CreateString("login"));	// Add two values to the array.
+	arr->SetValue(1, CefV8Value::CreateString("home"));
+	obj->SetValue("privilige", arr, V8_PROPERTY_ATTRIBUTE_NONE); // 传递arr
+	object->SetValue("sea", obj, V8_PROPERTY_ATTRIBUTE_NONE);
   }
 
  

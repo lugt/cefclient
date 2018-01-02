@@ -74,8 +74,35 @@ class CefV8HandlerImpl : public CefV8Handler {
 };
 
 class SeaCefUtils {
+	static std::string int2str(int num)
+	{
+		if (num == 0)
+			return "0";
 
+		std::string str = "";
+
+		int num_ = num > 0 ? num : -1 * num;
+
+		while (num)
+		{
+			str = (char)(num % 10 + 48) + str;
+			num /= 10;
+		}
+
+		if (num < 0)
+			str = "-" + str;
+
+		return str;
+	}
 public:
+	static std::string  status;
+	static std::map<std::string, CefRefPtr<CefV8Value>> functionMap;
+
+	static void registerCallback(int bw, std::string name, CefRefPtr<CefV8Value> val) {
+		name = name + "-" +int2str(bw);
+		functionMap.insert(std::pair<std::string, CefRefPtr<CefV8Value>>(name, val));
+	}
+
 	// Replace all instances of |from| with |to| in |str|.
 	static std::string StringReplace(const std::string& str,
 		const std::string& from,
@@ -482,7 +509,7 @@ public:
 				return false;
 			}
 
-			if (url_host == "local") {
+			if (url_host == "local" || url_host == "game") {
 				data_ = "";
 				char *buffer;
 				//也可以将buffer作为输出参数
@@ -491,7 +518,11 @@ public:
 					perror("getcwd error");
 				}
 				std::string url_n_path = CefString(buffer);
-				url_n_path += CefString("\\btzero_10_flat\\");
+				if (url_host == "game") {
+					url_n_path += CefString("\\release_egret\\");
+				}else {
+					url_n_path += CefString("\\btzero_10_flat\\");
+				}
 				url_n_path += SeaCefUtils::StringReplace(url_path, "/", "\\");
 				//std::ifstream fin2(url_path);
 				

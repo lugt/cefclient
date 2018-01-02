@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<e:Skin class="profileSkillListIRSkin" width="87" height="120" xmlns:e="http://ns.egret.com/eui">
+	<e:Image height="88" width="87" x="1" y="5" source="skillItemFrame_png"/>
+	<e:Image height="71" width="65" x="11" y="14" source="{data.icon}"/>
+	<e:Label x="7" y="96" width="76" size="18" textColor="0xFFAC1C" text="{data.name}"
+	        stroke="1" strokeColor="0" fontFamily="微软雅黑" textAlign="center" verticalAlign="middle"/>
+</e:Skin> 

@@ -122,7 +122,7 @@ void RootWindowWin::Init(RootWindow::Delegate* delegate,
   DCHECK(!initialized_);
 
   delegate_ = delegate;
-  with_controls_ = false; //config.with_controls; Sea::Set if there should be controls;
+  with_controls_ = true; //false; //config.with_controls; Sea::Set if there should be controls;
   with_osr_ = false; //config.with_osr;
   with_extension_ = config.with_extension;
 

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<e:Skin class="profileUISkin" width="480" height="800" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Button id="btnReturn" verticalCenter="-247.5" horizontalCenter="-184.5">
+		<e:skinName>
+			<e:Skin states="up,down,disabled">
+				<e:Image width="90%" height="90%" width.down="100%" height.down="100%"
+				         horizontalCenter="0" verticalCenter="0" source="btnReturn_png" source.down="btnReturn_png"/>
+				<e:Label id="labelDisplay" horizontalCenter="0" verticalCenter="0"/>
+			</e:Skin>
+		</e:skinName>
+	</e:Button>
+	<e:Button y="631.5" x="47">
+		<e:skinName>
+			<e:Skin states="up,down,disabled">
+				<e:Image width="90%" height="90%" width.down="100%" height.down="100%"
+				horizontalCenter="0" verticalCenter="0" source="btnEquip_png" source.down="btnEquip_png"/>
+				<e:Label id="labelDisplay1" horizontalCenter="0" verticalCenter="0"/>
+			</e:Skin>
+		</e:skinName>
+	</e:Button>
+	<e:Button y="631.5" x="267">
+		<e:skinName>
+			<e:Skin states="up,down,disabled">
+				<e:Image width="90%" height="90%" width.down="100%" height.down="100%"
+				horizontalCenter="0" verticalCenter="0" source="btnStrengthen_png" source.down="btnStrengthen_png"/>
+				<e:Label id="labelDisplay1" horizontalCenter="0" verticalCenter="0"/>
+			</e:Skin>
+		</e:skinName>
+	</e:Button>
+	<e:Image x="916" y="185" source="btnStrengthen_png"/>
+	<e:Image source="profileContent_png" x="34" y="193"/>
+	<e:Image source="profileTitle_png" x="176" y="136"/>
+	<e:Image source="skillBg_png" x="27" y="481" height="136"/>
+	
+	<e:Scroller height="120" width="410" x="31" y="486" id="scrListSkills">
+		<e:viewport>
+	<e:List id="listSkills" itemRendererSkinName="profileSkillListIRSkin" height="110">
+		<e:layout> 
+			<e:HorizontalLayout/>
+		</e:layout>
+	</e:List>
+		</e:viewport>
+	</e:Scroller>
+	
+</e:Skin>

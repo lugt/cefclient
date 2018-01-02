@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<e:Skin class="goodsListIRSkin" width="443" height="104" xmlns:e="http://ns.egret.com/eui">
+	<e:Image height="100%" width="100%" x="0" y="0" source="listItemBkgd_png"/>
+	<e:Label fontFamily="微软雅黑" text="{data.goodsName}" x="143" y="22" size="20" width="131" textAlign="center" verticalAlign="middle" textColor="0xFFFF00"/>
+	<e:Label fontFamily="微软雅黑" y="64" text="{data.comment}" textAlign="left" width="220" size="20" verticalAlign="middle" x="117" textColor="0x72E8FF"/>
+	<e:Image height="69" width="66" x="27" y="16" source="{data.icon}"/>
+</e:Skin>

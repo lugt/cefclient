@@ -32,6 +32,7 @@ class ClientBrowserDelegate : public ClientAppBrowser::Delegate {
 	CefRegisterSchemeHandlerFactory("sea", "service", new SeaSchemeHandlerFactory());
 	CefRegisterSchemeHandlerFactory("sea", "global", new SeaSchemeHandlerFactory());
 	CefRegisterSchemeHandlerFactory("sea", "local", new SeaSchemeHandlerFactory());
+	CefRegisterSchemeHandlerFactory("sea", "game", new SeaSchemeHandlerFactory());
 
     const std::string& crl_sets_path =
         CefCommandLine::GetGlobalCommandLine()->GetSwitchValue(
