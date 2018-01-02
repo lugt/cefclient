@@ -299,3 +299,4 @@ CMakeFiles/**
 *.depend
 *.stamp
 CMakeCache.txt
+*.sln
