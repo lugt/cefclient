@@ -3,6 +3,10 @@
 #include <sstream>
 #include <string>
 
+#include <stdio.h>
+#include <stdlib.h>
+
+
 #include "include/cef_base.h"
 #include "include/cef_crash_util.h"
 #include "include/cef_dom.h"
@@ -14,6 +18,11 @@ CefV8HandlerImpl::CefV8HandlerImpl()
 {
 
 }
+
+
+
+
+
 
 CefV8HandlerImpl::~CefV8HandlerImpl()
 {
@@ -28,6 +37,7 @@ CefV8HandlerImpl::~CefV8HandlerImpl()
 		}
 	}
 }
+
 
 // in CefV8HandlerImpl.cpp
 bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling function name(registered)
@@ -47,7 +57,50 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 				// Create a new V8 string value. See the "Basic JS Types" section below.
 				CefRefPtr<CefV8Value> str = CefV8Value::CreateString("1.0.7a");
 				//userName = "aaa"; 				
-				//sqlite3_exec(); laotu
+				//sqlite3_exec();
+				
+				
+
+				sqlite3 *db;
+				char *zErrMsg = 0;
+				int  rc;
+				char *sql;
+
+				/* Open database */
+				rc = sqlite3_open("test.db", &db);
+				if (rc) {
+					fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+					exit(0);
+				}
+				else {
+					fprintf(stdout, "Opened database successfully\n");
+				}
+
+				/* Create SQL statement */
+				sql = "CREATE TABLE COMPANY("  \
+					"ID INT PRIMARY KEY     NOT NULL," \
+					"NAME           TEXT    NOT NULL," \
+					"AGE            INT     NOT NULL," \
+					"ADDRESS        CHAR(50)," \
+					"SALARY         REAL );";
+
+				/* Execute SQL statement */
+				rc = sqlite3_exec(db, sql, SeasResourceHandler::c0allback, 0, &zErrMsg);
+				if (rc != SQLITE_OK) {
+					fprintf(stderr, "SQL error: %s\n", zErrMsg);
+					sqlite3_free(zErrMsg);
+				}
+				else {
+					fprintf(stdout, "Table created successfully\n");
+				}
+				sqlite3_close(db);
+
+
+				
+				
+				
+				
+				
 				//std::string sql = "SELECT FROM users WHERE usernmae = '"+userName+"'";				
 				//std::string sql = "SELECT FROM users WHERE usernmae = 'aaa'";				
 				//{equipId:182, group:1, name:"louxiadaxingjiqiyihao", delay:100, period :1000 }
