@@ -73,7 +73,9 @@ class CefV8HandlerImpl : public CefV8Handler {
 		IMPLEMENT_REFCOUNTING(CefV8HandlerImpl);
 };
 
-class SeaCefUtils {
+class SeaCefUtils : public CefV8Context{
+		
+
 	static std::string int2str(int num)
 	{
 		if (num == 0)
@@ -83,10 +85,10 @@ class SeaCefUtils {
 
 		int num_ = num > 0 ? num : -1 * num;
 
-		while (num)
+		while (num_)
 		{
-			str = (char)(num % 10 + 48) + str;
-			num /= 10;
+			str = (char)(num_ % 10 + 48) + str;
+			num_ /= 10;
 		}
 
 		if (num < 0)
@@ -95,9 +97,15 @@ class SeaCefUtils {
 		return str;
 	}
 public:
+
+	static void setStatus(std::string bo);
+	static std::string getStatus();
+
+private:
 	static std::string  status;
 	static std::map<std::string, CefRefPtr<CefV8Value>> functionMap;
 
+public :
 	static void registerCallback(int bw, std::string name, CefRefPtr<CefV8Value> val) {
 		name = name + "-" +int2str(bw);
 		functionMap.insert(std::pair<std::string, CefRefPtr<CefV8Value>>(name, val));

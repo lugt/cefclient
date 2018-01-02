@@ -20,10 +20,6 @@ CefV8HandlerImpl::CefV8HandlerImpl()
 }
 
 
-
-
-
-
 CefV8HandlerImpl::~CefV8HandlerImpl()
 {
 	// Remove any JavaScript callbacks registered for the context that has been released.
@@ -38,6 +34,16 @@ CefV8HandlerImpl::~CefV8HandlerImpl()
 	}
 }
 
+std::string SeaCefUtils::status;
+std::map<std::string, CefRefPtr<CefV8Value>> SeaCefUtils::functionMap;
+
+void SeaCefUtils::setStatus(std::string str) {
+	status = str;
+}
+
+std::string SeaCefUtils::getStatus() {
+	return status;
+}
 
 // in CefV8HandlerImpl.cpp
 bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling function name(registered)
@@ -53,7 +59,7 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 			std::string userName = arguments[0]->GetStringValue();
 			std::string passWord = arguments[1]->GetStringValue();
 			if (userName.length() > 0 && passWord.length() > 0) {
-				//用户名、密码有效 ，展开登陆逻辑， 操作结束后，返回retval
+				//用户名、密码有效 ，展开登陆逻辑， 操作结束后，返回retval  
 				// Create a new V8 string value. See the "Basic JS Types" section below.
 				CefRefPtr<CefV8Value> str = CefV8Value::CreateString("1.0.7a");
 				//userName = "aaa"; 				
@@ -107,7 +113,7 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 				//sqlite_exec_sql(sql);
 				CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL,NULL);
 				ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
-				SeaCefUtils::status = "ss"; // 标记登陆成功
+				SeaCefUtils::setStatus( "ss" ); // 标记登陆成功    
 				retval = ret;
 				handle = true;
 			}
@@ -124,7 +130,7 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 	}else if (name == "SEA_userstatus") {
 
 		CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
-			if (SeaCefUtils::status == "ss") { // 检查登陆状态
+			if (SeaCefUtils::getStatus() == "ss") { // 检查登陆状态   
 				//Values are assigned to an array using the SetValue() method variant that takes an index as the first argument.
 				// Add two values to the array.
 				ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);

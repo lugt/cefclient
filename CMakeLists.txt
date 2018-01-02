@@ -533,11 +533,11 @@ if(OS_WINDOWS)
     ${CEFCLIENT_RESOURCES_SRCS}
     ${CEFCLIENT_WINDOWS_SRCS}
     )
-  add_executable(cef_local_renders 
-  browser/sea_handler.cc 
-  browser/sea_handler.h 
-  browser/SeasHandler.cpp 
-  browser/SeasHandler.h)
+  #add_executable(cef_local_renders 
+  #browser/sea_handler.cc 
+  #browser/sea_handler.h 
+  #browser/SeasHandler.cpp 
+  #browser/SeasHandler.h)
   # Executable target.
 
   add_executable(${CEF_TARGET} WIN32 ${CEFCLIENT_SRCS})
