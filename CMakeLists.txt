@@ -64,8 +64,8 @@ set(CEFCLIENT_BROWSER_BROWSER_SRCS
   browser/sea_handler.h
   browser/SeasHandler.cpp
   browser/SeasHandler.h
-  browser/sqlite.c
-  browser/sqlite.h
+  browser/sqlite3.c
+  browser/sqlite3.h
   )
 source_group(cefclient\\\\browser FILES ${CEFCLIENT_BROWSER_BROWSER_SRCS})
 
