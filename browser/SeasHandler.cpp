@@ -38,14 +38,6 @@ CefV8HandlerImpl::~CefV8HandlerImpl()
 	}
 }
 
-static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
-	int i;
-	for (i = 0; i<argc; i++) {
-		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-	}
-	printf("\n");
-	return 0;
-}
 
 // in CefV8HandlerImpl.cpp
 bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling function name(registered)
@@ -93,7 +85,7 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 					"SALARY         REAL );";
 
 				/* Execute SQL statement */
-				rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+				rc = sqlite3_exec(db, sql, SeasResourceHandler::c0allback, 0, &zErrMsg);
 				if (rc != SQLITE_OK) {
 					fprintf(stderr, "SQL error: %s\n", zErrMsg);
 					sqlite3_free(zErrMsg);

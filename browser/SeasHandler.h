@@ -449,7 +449,7 @@ public:
 
 	SeasResourceHandler() : offset_(0) {}
 
-	static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
+	static int c0allback(void *NotUsed, int argc, char **argv, char **azColName) {
 		int i;
 		for (i = 0; i<argc; i++) {
 			printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
