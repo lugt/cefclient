@@ -885,8 +885,9 @@ void RootWindowWin::OnSetAddress(const std::string& url) {
 void RootWindowWin::OnSetTitle(const std::string& title) {
   REQUIRE_MAIN_THREAD();
 
+  std::string m_title = "SEA - "+title;
   if (hwnd_)
-    SetWindowText(hwnd_, CefString(title).ToWString().c_str());
+    SetWindowText(hwnd_, CefString(m_title).ToWString().c_str());
 }
 
 void RootWindowWin::OnSetFullscreen(bool fullscreen) {

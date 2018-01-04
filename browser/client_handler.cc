@@ -723,9 +723,11 @@ bool ClientHandler::OnCertificateError(CefRefPtr<CefBrowser> browser,
 
   // 证书错误,请检查是否可以继续
 
-  if (request_url.ToString().find("https://north.niimei.com") == 0U) {
+  if (request_url.ToString().find("niimei.com") == 0U) {
 	// 强制信任callback->Continue(true);
 	  // return true;
+	  callback->Continue(true);
+	  return true;
   }
 
   if (cert_error == ERR_CERT_AUTHORITY_INVALID &&
@@ -1081,12 +1083,11 @@ void ClientHandler::BuildTestMenu(CefRefPtr<CefMenuModel> model) {
 
   // Build the sub menu.
   CefRefPtr<CefMenuModel> submenu =
-      model->AddSubMenu(CLIENT_ID_TESTMENU_SUBMENU, "Context Menu Test");
+      model->AddSubMenu(CLIENT_ID_TESTMENU_SUBMENU, " Sea Running Mode");
   submenu->AddCheckItem(CLIENT_ID_TESTMENU_CHECKITEM, "Check Item");
-  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM1, "Radio Item 1", 0);
-  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM2, "Radio Item 2", 0);
-  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM3, "Radio Item 3", 0);
-
+  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM1, "SEA Radio 1", 0);
+  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM2, "SEA Radio  2", 0);
+  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM3, "SEA Radio Item 3", 0);
   // Check the check item.
   if (test_menu_state_.check_item)
     submenu->SetChecked(CLIENT_ID_TESTMENU_CHECKITEM, true);

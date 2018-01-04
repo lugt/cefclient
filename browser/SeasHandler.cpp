@@ -172,7 +172,7 @@ int SeaCefUtils::URLRequest(CefRefPtr<CefV8Value> json)
 	// 将数据上传到服务器
 	CefRefPtr<CefRequest> request = CefRequest::Create();
 	if (!json->HasValue("url")) {
-		return;
+		return -901;
 	}
 	// Set the request method. Supported methods include GET, POST, HEAD, DELETE and PUT.
 	std::string met = "GET";
@@ -183,11 +183,11 @@ int SeaCefUtils::URLRequest(CefRefPtr<CefV8Value> json)
 		request->SetMethod("POST");
 	}
 
-
+	return 1000;
 
 }
 
-void V8toMap(CefRefPtr<CefV8Value> headers, std::map<std::string, std::string> & map) {
+void V8toMap(CefRefPtr<CefV8Value> headers, std::map<std::string, std::string> & map){
 
 	std::vector<CefString> keys;
 	//if (!headers->IsArray()) return -1001;
@@ -207,7 +207,7 @@ int SeaCefUtils::FileRequest(CefRefPtr<CefV8Value> json)
 	CefRefPtr<CefRequest> request = CefRequest::Create();
 
 	if (!json->HasValue("url")) {
-		return;
+		return -901;
 	}
 	std::string thisurl = json->GetValue("url")->GetStringValue();// FIXME：从参数中取
 	request->SetURL(thisurl);
@@ -236,13 +236,13 @@ int SeaCefUtils::FileRequest(CefRefPtr<CefV8Value> json)
 
 	if (json != NULL && json->HasValue("params")) {// 将所有附加参数写入到form中
 		CefRefPtr<CefV8Value> params = json->GetValue("params");
-		int len = params->GetArrayLength, inner_i = 0;
+		int len = params->GetArrayLength(), inner_i = 0;
 		for (inner_i = 0; inner_i < len; inner_i ++) {
 			CefString key = params->GetValue(inner_i)->GetStringValue();
-			upload_data_s << "--" << boundaryId
-				<< "\r\n"
-				<< "Content-Disposition: form-data; name=\"" << key.c_str()
-				<< "\r\n";
+			/*upload_data_s << "--" << boundaryId
+			<< "\r\n"
+			<< "Content-Disposition: form-data; name=\"" << key.c_str()
+			<< "\r\n";*/
 		}
 	}
 
@@ -260,10 +260,9 @@ int SeaCefUtils::FileRequest(CefRefPtr<CefV8Value> json)
 		upload_data_s << "\r\n" << "\r\n" << "--" << boundaryId << "--" << "\r\n";
 		const std::string upload_data = upload_data_s.str();
 		CefRefPtr<CefPostDataElement> element = CefPostDataElement::Create();
-
 		element->SetToBytes(upload_data.size(), upload_data.c_str());// 最大缺点是文件太大后，传递不过去
-		std::stringstream sizeSS; sizeSS << upload_data.size();
-		headerMap.insert(std::make_pair("Content-Length", sizeSS.str()));// Content-Length可以不指定
+		//upload_data.size()
+		headerMap.insert(std::make_pair("Content-Length", SeaCefUtils::int2str(upload_data.size())));// Content-Length可以不指定
 		postData->AddElement(element);
 		request->SetHeaderMap(headerMap);
 		request->SetPostData(postData);// 发送请求到服务端
@@ -272,6 +271,7 @@ int SeaCefUtils::FileRequest(CefRefPtr<CefV8Value> json)
 	}catch (std::exception e) {
 
 	}
+	return 1000;
 }
 
 std::string SeaCefUtils::int2str(int num) {

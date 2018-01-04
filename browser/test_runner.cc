@@ -62,7 +62,7 @@ void RunGetSourceTest(CefRefPtr<CefBrowser> browser) {
       std::string source = StringReplace(string, "<", "&lt;");
       source = StringReplace(source, ">", "&gt;");
       std::stringstream ss;
-      ss << "<html><body bgcolor=\"white\">Haha Source:<pre>" << source
+      ss << "<html><body bgcolor=\"white\">Sea 提醒您 Source:<pre>" << source
          << "</pre></body></html>";
       browser_->GetMainFrame()->LoadString(ss.str(), "http://tests/getsource");
     }
