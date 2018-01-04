@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <vector>
 
+#include "include/cef_urlrequest.h"
 #include "include/cef_base.h"
 #include "include/cef_crash_util.h"
 #include "include/cef_dom.h"
@@ -44,6 +46,7 @@ void SeaCefUtils::setStatus(std::string str) {
 std::string SeaCefUtils::getStatus() {
 	return status;
 }
+
 
 // in CefV8HandlerImpl.cpp
 bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling function name(registered)
@@ -164,6 +167,132 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 }
 
 
+int SeaCefUtils::URLRequest(CefRefPtr<CefV8Value> json)
+{
+	// 将数据上传到服务器
+	CefRefPtr<CefRequest> request = CefRequest::Create();
+	if (!json->HasValue("url")) {
+		return;
+	}
+	// Set the request method. Supported methods include GET, POST, HEAD, DELETE and PUT.
+	std::string met = "GET";
+	if (json->HasValue("method")) {
+		met = json->GetValue("method")->GetStringValue();
+	}
+	if (met == "POST") {
+		request->SetMethod("POST");
+	}
+
+
+
+}
+
+void V8toMap(CefRefPtr<CefV8Value> headers, std::map<std::string, std::string> & map) {
+
+	std::vector<CefString> keys;
+	//if (!headers->IsArray()) return -1001;
+	headers->GetKeys(keys);
+	int inner_j, len = keys.size();
+	for (inner_j = 0; inner_j < len; inner_j++) {
+		map.insert(std::make_pair(keys.at(inner_j), headers->GetValue(keys.at(inner_j))->GetStringValue()));
+	}
+
+}
+
+
+int SeaCefUtils::FileRequest(CefRefPtr<CefV8Value> json)
+{
+	
+	// 将数据上传到服务器
+	CefRefPtr<CefRequest> request = CefRequest::Create();
+
+	if (!json->HasValue("url")) {
+		return;
+	}
+	std::string thisurl = json->GetValue("url")->GetStringValue();// FIXME：从参数中取
+	request->SetURL(thisurl);
+	CefRefPtr<CefPostData> postData = CefPostData::Create();
+	request->SetMethod("POST");
+	CefRequest::HeaderMap headerMap;
+	if (json != NULL && json->HasValue("headers")) {// 从一个JSON参数中取出其他需要传递的参数
+		CefRefPtr<CefV8Value> headers = json->GetValue("headers");
+		std::vector<CefString> keys;
+		//if (!headers->IsArray()) return -1001;
+		headers->GetKeys(keys);
+		int inner_j, len = keys.size();
+		for(inner_j = 0; inner_j < len; inner_j++){ 
+			headerMap.insert(std::make_pair(keys.at(inner_j), headers->GetValue(keys.at(inner_j))->GetStringValue()));
+		}
+	}
+
+	// 将文件列表返回到前端
+	time_t time0; 	time(&time0); 	srand(time0);
+	std::string boundaryId = "ce-391882-38902-"+ SeaCefUtils::int2str(time0) + "-"+ SeaCefUtils::int2str(rand()) + "-" + SeaCefUtils::int2str(rand());
+	std::string bound = "multipart/form-data;boundary="; bound += boundaryId;
+	headerMap.insert(std::make_pair("Content-Type", bound));
+	// 读取文件并上传
+
+	std::stringstream upload_data_s;
+
+	if (json != NULL && json->HasValue("params")) {// 将所有附加参数写入到form中
+		CefRefPtr<CefV8Value> params = json->GetValue("params");
+		int len = params->GetArrayLength, inner_i = 0;
+		for (inner_i = 0; inner_i < len; inner_i ++) {
+			CefString key = params->GetValue(inner_i)->GetStringValue();
+			upload_data_s << "--" << boundaryId
+				<< "\r\n"
+				<< "Content-Disposition: form-data; name=\"" << key.c_str()
+				<< "\r\n";
+		}
+	}
+
+	CefString file = std::wstring(json->GetValue("filename")->GetStringValue());// szFile为待上传的文件
+	try {
+
+		std::string fn = file.ToString();
+		std::ifstream in(file.ToWString(), std::ios::binary/*需要指定为二进制模式打开*/);
+		upload_data_s
+			<< "--" << boundaryId
+			<< "\r\n"
+			<< "Content-Disposition: form-data; name=\"up"; //<< //SetString(count, file);
+
+		// 上传数据的结尾标志
+		upload_data_s << "\r\n" << "\r\n" << "--" << boundaryId << "--" << "\r\n";
+		const std::string upload_data = upload_data_s.str();
+		CefRefPtr<CefPostDataElement> element = CefPostDataElement::Create();
+
+		element->SetToBytes(upload_data.size(), upload_data.c_str());// 最大缺点是文件太大后，传递不过去
+		std::stringstream sizeSS; sizeSS << upload_data.size();
+		headerMap.insert(std::make_pair("Content-Length", sizeSS.str()));// Content-Length可以不指定
+		postData->AddElement(element);
+		request->SetHeaderMap(headerMap);
+		request->SetPostData(postData);// 发送请求到服务端
+		//CefRefPtr<CefBrowser> browser = getBrowser();// 得到当前浏览器
+		//CefRefPtr<CefWebURLRequest> mUrlRequest = CefWebURLRequest::Create(request, new RequestClient(), browser->GetHost()->GetRequestContext());
+	}catch (std::exception e) {
+
+	}
+}
+
+std::string SeaCefUtils::int2str(int num) {
+	if (num == 0)
+		return "0";
+
+	std::string str = "";
+
+	int num_ = num > 0 ? num : -1 * num;
+
+	while (num_)
+	{
+		str = (char)(num_ % 10 + 48) + str;
+		num_ /= 10;
+	}
+
+	if (num < 0)
+		str = "-" + str;
+
+	return str;
+}
 /**
 
 

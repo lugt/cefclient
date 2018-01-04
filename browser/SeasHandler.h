@@ -76,34 +76,16 @@ class CefV8HandlerImpl : public CefV8Handler {
 class SeaCefUtils : public CefV8Context{
 		
 
-	static std::string int2str(int num)
-	{
-		if (num == 0)
-			return "0";
+public :
 
-		std::string str = "";
-
-		int num_ = num > 0 ? num : -1 * num;
-
-		while (num_)
-		{
-			str = (char)(num_ % 10 + 48) + str;
-			num_ /= 10;
-		}
-
-		if (num < 0)
-			str = "-" + str;
-
-		return str;
-	}
-public:
-
+	static std::string int2str(int num);
 	static void setStatus(std::string bo);
 	static std::string getStatus();
-
-private:
 	static std::string  status;
 	static std::map<std::string, CefRefPtr<CefV8Value>> functionMap;
+	int URLRequest(CefRefPtr<CefV8Value> json);
+	int FileRequest(CefRefPtr<CefV8Value> json);
+	void V8toMap(CefRefPtr<CefV8Value> hd, std::map<std::string, std::string> & map);
 
 public :
 	static void registerCallback(int bw, std::string name, CefRefPtr<CefV8Value> val) {
