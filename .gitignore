@@ -299,4 +299,7 @@ CMakeFiles/**
 *.depend
 *.stamp
 CMakeCache.txt
+
+
+release_egret/**
 *.sln

@@ -516,9 +516,9 @@ public:
 			//const std::string& org_url_host = CefString(&parts.host);
 			
 			const std::string& org_url_path = CefString(&parts.path);
-			std::string url_path = org_url_path.substr(org_url_path.find("/", 2) + 1);
+			std::string url_path = org_url_path; //org_url_path.substr(org_url_path.find("/", 2) + 1);
 
-			std::string url_host = org_url_path.substr(2, org_url_path.find("/", 2) - 2);
+			std::string url_host = CefString(&parts.host);//org_url_path.substr(2, org_url_path.find("/", 2) - 2);
 
 			if (strstr(url_host.c_str(), "global") != NULL) {
 				request->SetURL(CefString("https://north.niimei.com"));
@@ -614,7 +614,14 @@ public:
 		CEF_REQUIRE_IO_THREAD();
 
 		DCHECK(!data_.empty() || isStreamed == true && totalLength > 0);
+		
+		CefResponse::HeaderMap p;
+		response->GetHeaderMap(p);
+/*		if (p.find(CefString("Access-Control-Allow-Origin")).) {
 
+		}*/
+		//p.insert(std::make_pair("Access-Control-Allow-Origin", "*"));
+		response->SetHeaderMap(p);		
 		response->SetMimeType(mime_type_);
 		response->SetStatus(200);
 

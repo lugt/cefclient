@@ -64,6 +64,7 @@ class ClientRenderDelegate : public ClientAppRenderer::Delegate {
 		"(function() {"
 		"  seaExtension.msg = 'Extension Sea is daemoning!';"
 		"})();";
+		//"document.write('<script src='sea://local/js/qr.js'></script>');";
 
 	// Register the extension.
 	CefRegisterExtension("v8/test", extensionCode, NULL);

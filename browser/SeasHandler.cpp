@@ -58,62 +58,50 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 		if (arguments.size() == 2 && arguments[0]->IsString() && arguments[1]->IsString()) {
 			std::string userName = arguments[0]->GetStringValue();
 			std::string passWord = arguments[1]->GetStringValue();
+
+			CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
+
 			if (userName.length() > 0 && passWord.length() > 0) {
 				//用户名、密码有效 ，展开登陆逻辑， 操作结束后，返回retval  
-				// Create a new V8 string value. See the "Basic JS Types" section below.
 				CefRefPtr<CefV8Value> str = CefV8Value::CreateString("1.0.7a");
-				//userName = "aaa"; 				
-				//sqlite3_exec();
-				
-				
-
-				sqlite3 *db;
-				char *zErrMsg = 0;
-				int  rc;
-				char *sql;
+				ret->SetValue("version", str, V8_PROPERTY_ATTRIBUTE_NONE);
+								
+				sqlite3 *db;				char *zErrMsg = 0;				int  rc;				char *sql;
 
 				/* Open database */
 				rc = sqlite3_open("test.db", &db);
+				std::string errmsg;
 				if (rc) {
-					fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-					exit(0);
-				}
-				else {
-					fprintf(stdout, "Opened database successfully\n");
-				}
+					errmsg  = "Can't open database: \n";
+					errmsg += CefString(sqlite3_errmsg(db));
+					ret->SetValue("ret", CefV8Value::CreateInt(-920), V8_PROPERTY_ATTRIBUTE_NONE);
+				}else {
+					errmsg = "Opened database successfully\n";
+					/* Create SQL statement */
+					sql = "CREATE TABLE COMPANY("  \
+						"ID INT PRIMARY KEY     NOT NULL," \
+						"NAME           TEXT    NOT NULL," \
+						"AGE            INT     NOT NULL," \
+						"ADDRESS        CHAR(50)," \
+						"SALARY         REAL );";
+					ret->SetValue("sql", CefV8Value::CreateString(sql), V8_PROPERTY_ATTRIBUTE_NONE);
 
-				/* Create SQL statement */
-				sql = "CREATE TABLE COMPANY("  \
-					"ID INT PRIMARY KEY     NOT NULL," \
-					"NAME           TEXT    NOT NULL," \
-					"AGE            INT     NOT NULL," \
-					"ADDRESS        CHAR(50)," \
-					"SALARY         REAL );";
-
-				/* Execute SQL statement */
-				rc = sqlite3_exec(db, sql, SeasResourceHandler::c0allback, 0, &zErrMsg);
-				if (rc != SQLITE_OK) {
-					fprintf(stderr, "SQL error: %s\n", zErrMsg);
-					sqlite3_free(zErrMsg);
-				}
-				else {
-					fprintf(stdout, "Table created successfully\n");
-				}
-				sqlite3_close(db);
-
-
-				
-				
-				
-				
-				
-				//std::string sql = "SELECT FROM users WHERE usernmae = '"+userName+"'";				
-				//std::string sql = "SELECT FROM users WHERE usernmae = 'aaa'";				
-				//{equipId:182, group:1, name:"louxiadaxingjiqiyihao", delay:100, period :1000 }
-				//sqlite_exec_sql(sql);
-				CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL,NULL);
-				ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
-				SeaCefUtils::setStatus( "ss" ); // 标记登陆成功    
+					/* Execute SQL statement */
+					std::string exec_msg;
+					rc = sqlite3_exec(db, sql, SeasResourceHandler::c0allback, 0, &zErrMsg);
+					if (rc != SQLITE_OK) {
+						exec_msg = "SQL error: %s\n";
+						exec_msg += zErrMsg;
+						sqlite3_free(zErrMsg);
+					}	else {
+						exec_msg = "Table created successfully\n";
+					}
+					sqlite3_close(db);
+					ret->SetValue("db_exec_msg", CefV8Value::CreateString(exec_msg), V8_PROPERTY_ATTRIBUTE_NONE);
+					ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
+					SeaCefUtils::setStatus("login" + userName); // 标记登陆成功   
+				} 
+				ret->SetValue("db_open_msg", CefV8Value::CreateString(errmsg), V8_PROPERTY_ATTRIBUTE_NONE);
 				retval = ret;
 				handle = true;
 			}
@@ -130,7 +118,7 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 	}else if (name == "SEA_userstatus") {
 
 		CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
-			if (SeaCefUtils::getStatus() == "ss") { // 检查登陆状态   
+			if (SeaCefUtils::getStatus().substr(0,5) == "login") { // 检查登陆状态   
 				//Values are assigned to an array using the SetValue() method variant that takes an index as the first argument.
 				// Add two values to the array.
 				ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
@@ -174,3 +162,14 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 	}
 	return true;
 }
+
+
+/**
+
+
+//std::string sql = "SELECT FROM users WHERE usernmae = '"+userName+"'";
+//std::string sql = "SELECT FROM users WHERE usernmae = 'aaa'";
+//{equipId:182, group:1, name:"louxiadaxingjiqiyihao", delay:100, period :1000 }
+//sqlite_exec_sql(sql);
+
+*/
