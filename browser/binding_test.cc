@@ -38,7 +38,8 @@ class Handler : public CefMessageRouterBrowserSide::Handler {
     if (message_name.find(kTestMessageName) == 0) {
       // Reverse the string and return.
       std::string result = message_name.substr(sizeof(kTestMessageName));
-      std::reverse(result.begin(), result.end());
+	  std::reverse(result.begin(), result.end());
+	  result = result + " \n-- SEA Handler Has Finished in onQuery Function.";
       callback->Success(result);
       return true;
     }
