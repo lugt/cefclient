@@ -23,6 +23,7 @@
 #include "tests/shared/browser/extension_util.h"
 #include "tests/shared/browser/resource_util.h"
 #include "tests/shared/common/client_switches.h"
+#include "tests/cefclient/browser/SeasHandler.h"
 
 namespace client {
 
@@ -316,14 +317,14 @@ void ClientHandler::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser,
       model->AddSeparator();
 
     // Add DevTools items to all context menus.
-    model->AddItem(CLIENT_ID_SHOW_DEVTOOLS, "&Sea 开发工具 ");
-    model->AddItem(CLIENT_ID_CLOSE_DEVTOOLS, " 关闭开发工具 ");
+    model->AddItem(CLIENT_ID_SHOW_DEVTOOLS, "&Sea 开发工具栏 ");
+    model->AddItem(CLIENT_ID_CLOSE_DEVTOOLS, " 关闭开发工具栏 ");
     model->AddSeparator();
-    model->AddItem(CLIENT_ID_INSPECT_ELEMENT, "检查项目 ");
+    model->AddItem(CLIENT_ID_INSPECT_ELEMENT, "检查项目栏 ");
 
     if (HasSSLInformation(browser)) {
       model->AddSeparator();
-      model->AddItem(CLIENT_ID_SHOW_SSL_INFO, "Show SSL information");
+      model->AddItem(CLIENT_ID_SHOW_SSL_INFO, "展示 SSL 证书信息");
     }
 
     // Test context menu features.
@@ -410,8 +411,9 @@ bool ClientHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser,
     fclose(file);
 
     if (first_console_message_) {
-      test_runner::Alert(
-          browser, "Console messages written to \"" + console_log_file_ + "\"");
+      /*test_runner::Alert(
+          browser, "Console messages written to \"" + console_log_file_ + "\"");*/
+		SeaCefUtils::log_url = console_log_file_;
       first_console_message_ = false;
     }
   }
@@ -1083,11 +1085,11 @@ void ClientHandler::BuildTestMenu(CefRefPtr<CefMenuModel> model) {
 
   // Build the sub menu.
   CefRefPtr<CefMenuModel> submenu =
-      model->AddSubMenu(CLIENT_ID_TESTMENU_SUBMENU, " Sea Running Mode");
-  submenu->AddCheckItem(CLIENT_ID_TESTMENU_CHECKITEM, "Check Item");
-  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM1, "SEA Radio 1", 0);
-  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM2, "SEA Radio  2", 0);
-  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM3, "SEA Radio Item 3", 0);
+      model->AddSubMenu(CLIENT_ID_TESTMENU_SUBMENU, " Sea 运行模式");
+  submenu->AddCheckItem(CLIENT_ID_TESTMENU_CHECKITEM, "Standard ");
+  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM1, "Enhanced ", 0);
+  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM2, "OSR", 0);
+  submenu->AddRadioItem(CLIENT_ID_TESTMENU_RADIOITEM3, "EG Accel· ", 0);
   // Check the check item.
   if (test_menu_state_.check_item)
     submenu->SetChecked(CLIENT_ID_TESTMENU_CHECKITEM, true);

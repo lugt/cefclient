@@ -77,16 +77,20 @@ class SeaCefUtils : public CefV8Context{
 		
 
 public :
-
+	static std::string log_url;
 	static std::string int2str(int num);
 	static void setStatus(std::string bo);
 	static std::string getStatus();
+	static void setLoginResult(char * a, char * b);
 	static std::string  status;
 	static std::map<std::string, CefRefPtr<CefV8Value>> functionMap;
 	int URLRequest(CefRefPtr<CefV8Value> json);
 	int FileRequest(CefRefPtr<CefV8Value> json);
 	void V8toMap(CefRefPtr<CefV8Value> hd, std::map<std::string, std::string> & map);
-
+	static std::map<std::string, std::string> valueMap;
+	static std::string SeaCefUtils::getMap(std::string v);
+	static bool Auth(const CefString & name, CefRefPtr<CefV8Value> object, const CefV8ValueList & arguments, CefRefPtr<CefV8Value>& retval, CefString & exception);
+	static bool checkAuthStatus(const CefString & name, CefRefPtr<CefV8Value> object, const CefV8ValueList & arguments, CefRefPtr<CefV8Value>& retval, CefString & exception);
 public :
 	static void registerCallback(int bw, std::string name, CefRefPtr<CefV8Value> val) {
 		name = name + "-" +int2str(bw);
@@ -442,9 +446,11 @@ public:
 	static int c0allback(void *NotUsed, int argc, char **argv, char **azColName) {
 		int i;
 		for (i = 0; i<argc; i++) {
-			printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+			SeaCefUtils::setLoginResult(azColName[i],argv[i]);
+			//printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
 		}
-		printf("\n");
+		SeaCefUtils::setStatus("resulted:true");
+		//printf("\n");
 		return 0;
 	}
 

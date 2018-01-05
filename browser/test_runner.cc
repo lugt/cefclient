@@ -760,11 +760,11 @@ bool IsTestURL(const std::string& url, const std::string& path) {
   CefParseURL(url, parts);
 
   const std::string& url_host = CefString(&parts.host);
-  if (url_host != kTestHost && url_host != kLocalHost)
+  if (url_host != kTestHost && url_host != kLocalHost && url_host != "game")
     return false;
 
   const std::string& url_path = CefString(&parts.path);
-  return url_path.find(path) == 0;
+  return url_path.find(path) == 0 || CefString(&parts.scheme) == "sea" && path == "/urlrequest";
 }
 
 void CreateMessageHandlers(MessageHandlerSet& handlers) {

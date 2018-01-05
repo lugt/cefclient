@@ -14,7 +14,7 @@ namespace client {
 namespace {
 
 // The default URL to load in a browser window.
-	const char kDefaultUrl[] = "sea://game/index.html";//pages/login.html?from=init";
+	const char kDefaultUrl[] = "sea://local/index.html";//pages/login.html?from=init";
 
 // Returns the ARGB value for |color|.
 cef_color_t ParseColor(const std::string& color) {

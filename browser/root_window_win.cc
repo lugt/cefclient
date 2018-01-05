@@ -348,7 +348,7 @@ void RootWindowWin::CreateRootWindow(const CefBrowserSettings& settings,
                      DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, L"Arial");
 
     back_hwnd_ = CreateWindow(
-        L"BUTTON", L"Back", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_DISABLED,
+        L"BUTTON", L"返回", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_DISABLED,
         x_offset, 0, button_width, urlbar_height, hwnd_,
         reinterpret_cast<HMENU>(IDC_NAV_BACK), hInstance, 0);
     CHECK(back_hwnd_);
@@ -453,7 +453,7 @@ void RootWindowWin::RegisterRootClass(HINSTANCE hInstance,
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = 0;
   wcex.hInstance = hInstance;
-  wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CEFCLIENT));
+  wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDC_CEFCLIENT));
   wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
   wcex.hbrBackground = background_brush;
   wcex.lpszMenuName = MAKEINTRESOURCE(IDC_CEFCLIENT);

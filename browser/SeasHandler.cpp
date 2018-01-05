@@ -47,6 +47,198 @@ std::string SeaCefUtils::getStatus() {
 	return status;
 }
 
+std::map<std::string, std::string> SeaCefUtils::valueMap;
+
+void SeaCefUtils::setLoginResult(char *a, char*b) {
+	SeaCefUtils::valueMap.insert_or_assign(std::string(a), std::string(b));
+}
+
+std::string SeaCefUtils::getMap(std::string v) {
+	return valueMap.at(v);
+}
+
+bool SeaCefUtils::Auth(const CefString& name  //JavaScript calling function name(registered)
+	, CefRefPtr<CefV8Value> object                 //JavaScript
+	, const CefV8ValueList& arguments              // Parameters
+	, CefRefPtr<CefV8Value>& retval                // Return Values;
+	, CefString& exception) {
+
+	if (arguments.size() == 4 && arguments[0]->IsInt() && arguments[1]->IsString() && arguments[2]->IsString() && arguments[3]->IsString()) {
+		// code , openid, timeid, 
+		CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
+		int code = arguments[0]->GetIntValue();
+		std::string openid = arguments[1]->GetStringValue();
+		std::string timeid = arguments[2]->GetStringValue();
+		std::string nickname = arguments[3]->GetStringValue();
+
+		sqlite3 *db;				char *zErrMsg = 0;				int  rc;				const char *sql;
+
+		/* Open database */
+		rc = sqlite3_open("test.db", &db);
+		std::string errmsg;
+		if (rc) {
+			errmsg = "Can't open database: \n";
+			errmsg += CefString(sqlite3_errmsg(db));
+			ret->SetValue("ret", CefV8Value::CreateInt(-920), V8_PROPERTY_ATTRIBUTE_NONE);
+		}	else {
+			errmsg = "Opened database successfully\n";
+			/* Create SQL statement */
+			sql = "CREATE TABLE gameusers("  \
+				"ID   INTEGER  PRIMARY KEY  AUTOINCREMENT NOT NULL," \
+				"OPENID    VARCHAR(50) , " \
+				"TIMEID    VARCHAR(20),"\
+				"NICKNAME    VARCHAR(100));";
+
+			ret->SetValue("creat_sql", CefV8Value::CreateString(sql), V8_PROPERTY_ATTRIBUTE_NONE);
+
+			/* Execute SQL statement */
+			std::string exec_msg;
+			rc = sqlite3_exec(db, sql, SeasResourceHandler::c0allback, 0, &zErrMsg);
+			if (rc != SQLITE_OK) {
+				exec_msg = "SQL error: %s\n";
+				exec_msg += zErrMsg;
+				sqlite3_free(zErrMsg);
+			}
+			else {
+				exec_msg = "Table created successfully\n";
+			}
+
+			ret->SetValue("db_create_msg", CefV8Value::CreateString(exec_msg), V8_PROPERTY_ATTRIBUTE_NONE);
+
+			// Either, do the save
+			std::string pre_sql = "";
+			const char * sql2 = "";
+			if (code == 100) {
+				// 保存 openId
+				pre_sql = "INSERT INTO gameusers (`ID`, `OPENID`, `TIMEID` , `NICKNAME`) VALUES (NULL,   '" + openid + "', '" + timeid + "', '" + nickname + "');";
+				sql2 = pre_sql.c_str();
+			}
+			else {
+				// 读取 openId
+				pre_sql = "SELECT * FROM gameusers ORDER BY ID DESC LIMIT 1;";
+				sql2 = pre_sql.c_str();
+			}
+			ret->SetValue("db_exec_sql", CefV8Value::CreateString(CefString(pre_sql)), V8_PROPERTY_ATTRIBUTE_NONE);
+			rc = sqlite3_exec(db, sql2, SeasResourceHandler::c0allback, 0, &zErrMsg);
+			if (rc != SQLITE_OK) {
+				exec_msg = "Query Execution error: ";
+				exec_msg += zErrMsg;
+				sqlite3_free(zErrMsg);
+			}
+			else {
+				exec_msg = "Query executed successfully";
+			}
+			sqlite3_close(db);
+			ret->SetValue("db_execx_msg", CefV8Value::CreateString(exec_msg), V8_PROPERTY_ATTRIBUTE_NONE);
+			ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
+			//SeaCefUtils::setStatus("login" + openid); // 标记登陆成功   
+		}
+		ret->SetValue("db_open_msg", CefV8Value::CreateString(errmsg), V8_PROPERTY_ATTRIBUTE_NONE);
+		retval = ret;
+	} 	else if (arguments.size() == 2 && arguments[0]->IsString() && arguments[1]->IsString()) {
+		std::string userName = arguments[0]->GetStringValue();
+		std::string passWord = arguments[1]->GetStringValue();
+
+		CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
+
+		if (userName.length() > 0 && passWord.length() > 0) {
+			//用户名、密码有效 ，展开登陆逻辑， 操作结束后，返回retval  
+			CefRefPtr<CefV8Value> str = CefV8Value::CreateString("1.0.7a");
+			ret->SetValue("version", str, V8_PROPERTY_ATTRIBUTE_NONE);
+			sqlite3 *db;				char *zErrMsg = 0;				int  rc;				char *sql;
+			/* Open database */
+			rc = sqlite3_open("test.db", &db);
+			std::string errmsg;
+			if (rc) {
+				errmsg = "Can't open database: \n";
+				errmsg += CefString(sqlite3_errmsg(db));
+				ret->SetValue("ret", CefV8Value::CreateInt(-920), V8_PROPERTY_ATTRIBUTE_NONE);
+			}
+			else {
+				errmsg = "Opened database successfully\n";
+				/* Create SQL statement */
+				sql = "CREATE TABLE COMPANY("  \
+					"ID INT PRIMARY KEY     NOT NULL," \
+					"NAME           TEXT    NOT NULL," \
+					"AGE            INT     NOT NULL," \
+					"ADDRESS        CHAR(50)," \
+					"SALARY         REAL );";
+				ret->SetValue("sql", CefV8Value::CreateString(sql), V8_PROPERTY_ATTRIBUTE_NONE);
+
+				/* Execute SQL statement */
+				std::string exec_msg;
+				rc = sqlite3_exec(db, sql, SeasResourceHandler::c0allback, 0, &zErrMsg);
+				if (rc != SQLITE_OK) {
+					exec_msg = "SQL error: %s\n";
+					exec_msg += zErrMsg;
+					sqlite3_free(zErrMsg);
+				}
+				else {
+					exec_msg = "Table created successfully\n";
+				}
+				sqlite3_close(db);
+				ret->SetValue("db_exec_msg", CefV8Value::CreateString(exec_msg), V8_PROPERTY_ATTRIBUTE_NONE);
+				ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
+				SeaCefUtils::setStatus("login" + userName); // 标记登陆成功   
+			}
+			ret->SetValue("db_open_msg", CefV8Value::CreateString(errmsg), V8_PROPERTY_ATTRIBUTE_NONE);
+			retval = ret;
+		}
+	}
+	else {
+		// Argument Error
+		CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
+		//Values are assigned to an array using the SetValue() method variant that takes an index as the first argument.
+		// Add two values to the array.
+		ret->SetValue("ret", CefV8Value::CreateInt(-1002), V8_PROPERTY_ATTRIBUTE_NONE);
+		retval = ret;
+	}
+	return true;
+}
+
+
+bool SeaCefUtils::checkAuthStatus(const CefString& name  //JavaScript calling function name(registered)
+	, CefRefPtr<CefV8Value> object                 //JavaScript
+	, const CefV8ValueList& arguments              // Parameters
+	, CefRefPtr<CefV8Value>& retval                // Return Values;
+	, CefString& exception) {
+
+	CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
+	if (SeaCefUtils::getStatus().substr(0, 5) == "login") { // 检查登陆状态   
+		ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
+	}
+	else if (SeaCefUtils::getStatus().substr(0, 8) == "resulted") {
+		int flg = 0;
+		std::string mapval;
+		for (std::map<std::string, std::string>::iterator iter = SeaCefUtils::valueMap.begin();
+			iter != SeaCefUtils::valueMap.end(); ++iter) {
+			if (iter->first == "NICKNAME") {
+				flg = 1;
+			}
+			mapval += iter->first + ":" + iter->second + ",";
+		}
+		ret->SetValue("state", CefV8Value::CreateString(SeaCefUtils::getStatus()), V8_PROPERTY_ATTRIBUTE_NONE);
+		ret->SetValue("valuemap", CefV8Value::CreateString(mapval), V8_PROPERTY_ATTRIBUTE_NONE);
+		if (flg == 0 || SeaCefUtils::valueMap.at("OPENID").length() == 0)
+		{
+			ret->SetValue("ret", CefV8Value::CreateInt(-1009), V8_PROPERTY_ATTRIBUTE_NONE);
+		}
+		else {
+			ret->SetValue("timeid", CefV8Value::CreateString(SeaCefUtils::getMap("TIMEID")), V8_PROPERTY_ATTRIBUTE_NONE);
+			ret->SetValue("openid", CefV8Value::CreateString(SeaCefUtils::getMap("OPENID")), V8_PROPERTY_ATTRIBUTE_NONE);
+			ret->SetValue("nickname", CefV8Value::CreateString(SeaCefUtils::getMap("NICKNAME")), V8_PROPERTY_ATTRIBUTE_NONE);
+			ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
+		}
+	}
+	else {
+		//Values are assigned to an array using the SetValue() method variant that takes an index as the first argument.
+		// Add two values to the array.
+		ret->SetValue("ret", CefV8Value::CreateInt(-1007), V8_PROPERTY_ATTRIBUTE_NONE);
+	}
+	retval = ret;
+	return true;
+}
+
 
 // in CefV8HandlerImpl.cpp
 bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling function name(registered)
@@ -58,79 +250,13 @@ bool CefV8HandlerImpl::Execute(const CefString& name  //JavaScript calling funct
 	// In the CefV8Handler::Execute implementation for “registerJavascriptFunction”.
 	bool handle = false; // authorize
 	if (name == "SEA_seaAuth") {
-		if (arguments.size() == 2 && arguments[0]->IsString() && arguments[1]->IsString()) {
-			std::string userName = arguments[0]->GetStringValue();
-			std::string passWord = arguments[1]->GetStringValue();
-
-			CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
-
-			if (userName.length() > 0 && passWord.length() > 0) {
-				//用户名、密码有效 ，展开登陆逻辑， 操作结束后，返回retval  
-				CefRefPtr<CefV8Value> str = CefV8Value::CreateString("1.0.7a");
-				ret->SetValue("version", str, V8_PROPERTY_ATTRIBUTE_NONE);
-								
-				sqlite3 *db;				char *zErrMsg = 0;				int  rc;				char *sql;
-
-				/* Open database */
-				rc = sqlite3_open("test.db", &db);
-				std::string errmsg;
-				if (rc) {
-					errmsg  = "Can't open database: \n";
-					errmsg += CefString(sqlite3_errmsg(db));
-					ret->SetValue("ret", CefV8Value::CreateInt(-920), V8_PROPERTY_ATTRIBUTE_NONE);
-				}else {
-					errmsg = "Opened database successfully\n";
-					/* Create SQL statement */
-					sql = "CREATE TABLE COMPANY("  \
-						"ID INT PRIMARY KEY     NOT NULL," \
-						"NAME           TEXT    NOT NULL," \
-						"AGE            INT     NOT NULL," \
-						"ADDRESS        CHAR(50)," \
-						"SALARY         REAL );";
-					ret->SetValue("sql", CefV8Value::CreateString(sql), V8_PROPERTY_ATTRIBUTE_NONE);
-
-					/* Execute SQL statement */
-					std::string exec_msg;
-					rc = sqlite3_exec(db, sql, SeasResourceHandler::c0allback, 0, &zErrMsg);
-					if (rc != SQLITE_OK) {
-						exec_msg = "SQL error: %s\n";
-						exec_msg += zErrMsg;
-						sqlite3_free(zErrMsg);
-					}	else {
-						exec_msg = "Table created successfully\n";
-					}
-					sqlite3_close(db);
-					ret->SetValue("db_exec_msg", CefV8Value::CreateString(exec_msg), V8_PROPERTY_ATTRIBUTE_NONE);
-					ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
-					SeaCefUtils::setStatus("login" + userName); // 标记登陆成功   
-				} 
-				ret->SetValue("db_open_msg", CefV8Value::CreateString(errmsg), V8_PROPERTY_ATTRIBUTE_NONE);
-				retval = ret;
-				handle = true;
-			}
-		} else {
-			// Argument Error
-			CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
-			//Values are assigned to an array using the SetValue() method variant that takes an index as the first argument.
-			// Add two values to the array.
-			ret->SetValue("ret", CefV8Value::CreateInt(-1002), V8_PROPERTY_ATTRIBUTE_NONE);
-			retval = ret;
-
-			handle = true;
-		}
+		bool state = SeaCefUtils::Auth(name, object, arguments, retval, exception);
+		handle = true;
+		return state;
 	}else if (name == "SEA_userstatus") {
-
-		CefRefPtr<CefV8Value> ret = CefV8Value::CreateObject(NULL, NULL);
-			if (SeaCefUtils::getStatus().substr(0,5) == "login") { // 检查登陆状态   
-				//Values are assigned to an array using the SetValue() method variant that takes an index as the first argument.
-				// Add two values to the array.
-				ret->SetValue("ret", CefV8Value::CreateInt(1000), V8_PROPERTY_ATTRIBUTE_NONE);
-			}else {
-				//Values are assigned to an array using the SetValue() method variant that takes an index as the first argument.
-				// Add two values to the array.
-				ret->SetValue("ret", CefV8Value::CreateInt(-1007), V8_PROPERTY_ATTRIBUTE_NONE);
-			}
-			retval = ret;
+		bool state = SeaCefUtils::checkAuthStatus(name, object, arguments, retval, exception);
+		handle = true;
+		return state;
 	}else if(name == "SEA_onreturn"){
 		if (arguments.size() == 2 && arguments[0]->IsString() &&arguments[1]->IsFunction()) { // 相关的name + callback 
 			std::string message_name = arguments[0]->GetStringValue();
@@ -199,6 +325,7 @@ void V8toMap(CefRefPtr<CefV8Value> headers, std::map<std::string, std::string> &
 
 }
 
+std::string SeaCefUtils::log_url;
 
 int SeaCefUtils::FileRequest(CefRefPtr<CefV8Value> json)
 {
